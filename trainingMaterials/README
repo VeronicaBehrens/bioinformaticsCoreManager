@@ -1,6 +1,8 @@
 # This folder contains bioinformatics training materials I developed and taught for courses and workshops offered through the Stanford Genetics Department.
 
 # I find  Google Collab notebooks effective for teaching and training because they:
+#        Require no configuration
+#        Come with free access to GPUs free of charge
 #    (1) Are easily sharable via a simple Google Docs link
 #    (2) Do no require learners to install any software, ensuring all can get up-and-running quickly
 #    (3) Avoid differences between Mac and Windows operating systems
