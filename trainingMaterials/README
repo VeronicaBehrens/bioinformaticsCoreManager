@@ -1,7 +1,5 @@
 This folder contains bioinformatics training materials I developed and taught for courses and workshops offered through the Stanford Genetics Department.
 
-Most of the files in this folder are Google Collab Notebooks (or Jupyter Notebooks) that were exported as HTML.
-
 I find Google Collab notebooks effective for teaching and training because they:
     (1) Require no configuration or software installation, avoiding differences between operating systems and ensuring all be up-and-running quickly
     (2) Are easily sharable with a simple Google Docs link
