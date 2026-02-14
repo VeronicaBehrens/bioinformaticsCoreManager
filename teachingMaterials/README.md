@@ -1,6 +1,6 @@
 This folder contains bioinformatics training materials I developed and taught for courses and workshops offered through the Stanford Genetics Department.
 
-I find Google Collab notebooks effective for teaching and training because they:
+I find Google Collab notebooks effective for teaching and training because they:<br>
     (1) Require no configuration or software installation, avoiding differences between operating systems and ensuring all be up-and-running quickly
     (2) Are easily sharable with a simple Google Docs link
     (3) Can be toggled between running Python and R
