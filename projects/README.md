@@ -1,4 +1,4 @@
-# humans-chimpanzees hybrid iPSC computational projects
+# human-chimpanzee hybrid iPSC computational projects
 
 Much of my Ph.D. and postdoctoral research centered on a human-chimpanzee “hybrid” tetraploid iPSC system developed in the Kingsley Lab by fusing human diploid and chimpanzee diploid iPSCs. Working with this system requires both careful molecular experimental design and customized computational strategies tailored to a composite genome. In this directory, I included a small selection of the projects I did to discover gene regulatory differences between humans and chimpanzees using this iPSC system.
 
