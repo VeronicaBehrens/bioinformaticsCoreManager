@@ -1,0 +1,174 @@
+#!/bin/bash
+#SBATCH --job-name=flairTrans
+#SBATCH --output=logs_05_flair_transcriptome/chr22_log.out
+#SBATCH --error=logs_05_flair_transcriptome/chr22_log.err
+#SBATCH --time=2:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=vbehrens@stanford.edu
+#SBATCH --account=kingsley
+
+# initialize activation functions in THIS shell
+source "$(conda info --base)"/etc/profile.d/conda.sh
+conda activate flair_new
+
+SAMPLE=CHAf-D1_humanONLY
+#SAMPLE=CHAf-D1_chimpONLY
+GENE_ID= ENSG00000128335.15     # for plotting the isoforms recovered for a particular gene
+
+GENOME_FASTA=/labs/kingsley/jsong4/ref/hg38/hg38.fa
+GTF=/labs/kingsley/vbehrens/TADaptations/Isoseq_Kinnex_tetraploids/originalDataFromAzenta/isoseq/sample_bam/02_collapsedIsoforms/gencode.v49.chr_patch_hapl_scaff.annotation.gtf
+
+LONGREAD_JUNCTION_BED=${SAMPLE}.fl.aligned_hg38.sorted.MAPq0removed_chr22ONLY_intronJunctions.bed
+BAM_FILE=${SAMPLE}.fl.aligned_hg38.sorted.MAPq0removed_chr22ONLY.bam
+OUTPUT_BASE=./flair_transcriptome_results/chr22ONLY_${SAMPLE}_hg38_MAPq0removed
+
+### FLAIR TRANSCRIPTOME ###
+flair transcriptome --genome $GENOME_FASTA --gtf $GTF --junction_bed $LONGREAD_JUNCTION_BED --junction_support 2 --genomealignedbam $BAM_FILE --predictCDS --keep_intermediate --parallelmode byregion --output $OUTPUT_BASE
+###--parallelmode auto:1GB #this is the default parallelization strategy
+
+### PREDICT PRODUCTIBITY ###
+predictProductivity --input_isoforms ${OUTPUT_BASE}.isoforms.bed --gtf $GTF --genome_fasta $GENOME_FASTA --firstTIS --output ${OUTPUT_BASE}.isoforms.PredictProductivity
+
+### PLOT ISOFORM USAGE ###
+plot_isoform_usage ${OUTPUT_BASE}.isoforms.PredictProductivity.bed ${OUTPUT_BASE}.isoform.counts.txt $GENE_ID
+
+
+
+###########################################################
+
+
+#usage: transcriptome [-h] [-b GENOMEALIGNEDBAM] [-g GENOME] [-o OUTPUT] [-t THREADS] [-f GTF] [--junction_tab JUNCTION_TAB | --junction_bed JUNCTION_BED] [--junction_support JUNCTION_SUPPORT]
+#                     [--ss_window SS_WINDOW] [-s SUPPORT] [--stringent] [--check_splice] [-w END_WINDOW] [--noaligntoannot] [-n NO_REDUNDANT] [--max_ends MAX_ENDS] [--filter FILTER]
+#                     [--parallelmode PARALLELMODE] [--predictCDS] [--keep_intermediate] [--keep_sup]
+
+#options:
+#  -h, --help            show this help message and exit
+#  -b GENOMEALIGNEDBAM, --genomealignedbam GENOMEALIGNEDBAM
+#                        Sorted and indexed bam file aligned to the genome
+#  -g GENOME, --genome GENOME
+#                        FastA of reference genome, can be minimap2 indexed
+#  -o OUTPUT, --output OUTPUT
+#                        output file name base for FLAIR isoforms (default: flair)
+#  -t THREADS, --threads THREADS
+#                        minimap2 number of threads (4)
+#  -f GTF, --gtf GTF     GTF annotation file, used for renaming FLAIR isoforms to annotated isoforms and adjusting TSS/TESs
+#  --junction_tab JUNCTION_TAB
+#                        short-read junctions in SJ.out.tab format. Use this option if you aligned your short-reads with STAR, STAR will automatically output this file
+#  --junction_bed JUNCTION_BED
+#                        short-read junctions in bed format (can be generated from short-read alignment with junctions_from_sam)
+#  --junction_support JUNCTION_SUPPORT
+#                        if providing short-read junctions, minimum junction support required to keep junction. If your junctions file is in bed format, the score field will be used for read
+#                        support.
+#  --ss_window SS_WINDOW
+#                        window size for correcting splice sites (15)
+#  -s SUPPORT, --support SUPPORT
+#                        minimum number of supporting reads for an isoform (3)
+#  --stringent           specify if all supporting reads need to be full-length (spanning 25 bp of the first and last exons)
+#  --check_splice        enforce coverage of 4 out of 6 bp around each splice site and no insertions greater than 3 bp at the splice site
+#  -w END_WINDOW, --end_window END_WINDOW
+#                        window size for comparing TSS/TES (100)
+#  --noaligntoannot      related to old annotation_reliant, now specify if you don't want an initial alignment to the annotated sequences and only want transcript detection from the genomic
+#                        alignment. Will be slightly faster but less accurate if the annotation is good
+#  -n NO_REDUNDANT, --no_redundant NO_REDUNDANT
+#                        For each unique splice junction chain, report options include: none--best TSSs/TESs chosen for each unique set of splice junctions; longest--single TSS/TES chosen to
+#                        maximize length; best_only--single most supported TSS/TES used in conjunction chosen (none)
+#  --max_ends MAX_ENDS   maximum number of TSS/TES picked per isoform (2)
+#  --filter FILTER       Report options include: nosubset--any isoforms that are a proper set of another isoform are removed; default--subset isoforms are removed based on support;
+#                        comprehensive--default set + all subset isoforms; ginormous--comprehensive set + single exon subset isoforms
+#  --parallelmode PARALLELMODE
+#                        parallelization mode. Default: "auto:1GB" This indicates an automatic threshold where if the file is less than 1GB, parallelization is done by chromosome, but if it's
+#                        larger, parallelization is done by region of non-overlapping reads. Other modes: bychrom, byregion, auto:xGB - for setting the auto threshold, it must be in units of
+#                        GB.
+#  --predictCDS          specify if you want to predict the CDS of the final isoforms. Will be output in the final bed file but not the gtf file. Productivity annotation is also added in the
+#                        name field, which is detailed further in the predictProductivity documentation
+#  --keep_intermediate   specify if intermediate and temporary files are to be kept for debugging. Intermediate files include: promoter-supported reads file, read assignments to firstpass
+#                        isoforms
+#  --keep_sup            specify if you want to keep supplementary alignments to define isoforms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#2)Build a unified isoform set → then run SQANTI3 on it
+#We’ll let FLAIR generate a merged isoform model across all samples 
+#(any comparable long-read collapser is fine; SQANTI3 just needs a GTF/FASTA of isoforms).
+#Then we pass those isoforms to SQANTI3 for QC/filters.
+
+#2a) BAM → BED12 (FLAIR likes BED12)
+#for BAM in *.bam; do
+#  SAMPLE=${BAM%%.bam}
+#  echo $SAMPLE
+#  echo $BAM
+#  bedtools bamtobed -bed12 -i $BAM > ${SAMPLE}.bed12
+#done
+
+#2b) Correct per sample (use annotation to fix splice sites)
+#for BED in *.bed12; do
+#  SAMPLE=${BED%%.bed12}
+#  flair correct --threads 16 --query $BED --genome $GENOME --gtf $GTF --shortread $SJ_STAR --output ${SAMPLE}.corrected
+#done
+
+#2c) Collapse across all samples → unified isoforms
+#ls *.corrected.bed > allSamples_corrected_manifest.txt
+#flair collapse \
+#  --threads 32 \
+#  --genome $GENOME \
+#  --gtf $GTF \
+#  --query ./bed12Files/allSamples.corrected_all_corrected.bed \
+#  --reads ./bamFiles/H20961.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz \
+#          ./bamFiles/H23555.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/C8861.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/C3649K.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/CHAf-D1_humanONLY.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/CHAf-D1_chimpONLY.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/CHBf-A9_humanONLY.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#          ./bamFiles/CHBf-A9_chimpONLY.fl.aligned_hg38.sorted.MAPQ0removed.fastq.gz  \
+#  --mm2_args=-t32 \
+#  --stringent \
+#  --check_splice \
+#  --generate_map \
+#  --annotation_reliant $TRANSCRIPT_FASTA \
+#  -o allSamples_merged
+
+## DIDN'T USE ##
+#flair collapse \
+#  --threads 32 \
+#  --genome $GENOME \
+#  --gtf $GTF \
+#  --query ./bed12Files/allSamples.corrected_all_corrected.bed \
+#  --reads ../../sample_bam/H20961.fl.fasta.gz \
+#          ../../sample_bam/H23555.fl.fasta.gz \
+#          ../../sample_bam/C8861.fl.fasta.gz \
+#          ../../sample_bam/C3649K.fl.fasta.gz \
+#          ../../sample_bam/CHAf-D1.fl.fasta.gz \
+#          ../../sample_bam/CHBf-A9.fl.fasta.gz \
+#  --mm2_args=-t32 \
+#  --stringent \
+#  --check_splice \
+#  --generate_map \
+#  --annotation_reliant $TRANSCRIPT_FASTA \
+#  -o originalFastas_merged
+
+# Key outputs: merged.isoforms.gtf  merged.isoforms.fa
+
+#  --query ./bed12Files/allSamples_corrected_manifest.txt \
+
+
+
+#flair collapse -g genome.fa --gtf gene_annotations.gtf -q reads.flair_all_corrected.bed -r reads.fastq
+#--stringent --check_splice --generate_map --annotation_reliant generate
