@@ -1,4 +1,4 @@
-# Veronica Behrens: <br>Bioinformatics Core Manager Application
+# Veronica Behrens: Bioinformatics Core Manager Application
 
 This GitHub repo contains a selection of:
 1. bioinformatics teaching materials
