@@ -13,5 +13,5 @@ PDF of published co-first author paper that details:
 PDF of dissertation chapter (and future publication) that details:
 1. ATAC-seq
 2. transcription factor binding motif enrichment in differentially accessible regions
-3. Hi-C to examine 3D genome architecture differences
+3. Hi-C to examine 3D genome architecture differences<br>
 Please note that the qPCR-based karyotyping assay detailed in this PDF is no longer relevant. I have since developed a custom approach to detect karyotypic abnormalities in hybrd cells using whole genome sequencing data. I am happy to supply the code upon request.
