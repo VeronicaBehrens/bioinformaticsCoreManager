@@ -6,6 +6,6 @@ Most of the materials are presented as **Google Collab notebooks**, which I find
 1. Require no configuration or software installation, avoiding differences between operating systems and ensuring all be up-and-running quickly
 2. Are easily sharable via a simple hyperlink
 3. Can be toggled between running Python and R
-4. Can integrate Shell/Unix scripting using built-in "magic commands" (! and %%shell)
+4. Can integrate Shell/Unix scripting using built-in "magic commands" (`!` and `%%shell`)
 5. Allow easy downloading of example files
 6. Come with free access to GPUs
