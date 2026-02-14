@@ -16,3 +16,6 @@ PDF of dissertation chapter (and future publication) that details:
 3. Hi-C to examine 3D genome architecture differences<br>
 
 Please note that the qPCR-based karyotyping assay detailed in this PDF is no longer relevant. I have since developed a custom approach to detect karyotypic abnormalities in hybrid cells using whole genome sequencing data. I am happy to supply the code upon request.
+
+## IsoSeq_pipeline_humanChimpHybridCells
+This directory contains scripts used to prepare long-read PacBio Iso-seq data for differential isoform usage and differential feature inclusion analysis. It serves as an example of the type of pipelines I have developed. I am happy to supply the code for other pipelines/analyses described in my Cover Letter and Resume upon request.
