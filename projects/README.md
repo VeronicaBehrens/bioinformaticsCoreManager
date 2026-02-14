@@ -12,6 +12,6 @@ PDF of published co-first author paper that details:
 ## 3D-chromatin-differential-accessibility-and-arrangement-during-human-chimpanzee evolution_Behrens-2024.pdf 
 PDF of dissertation chapter (and future publication) that details:
 1. ATAC-seq
-2. transcription factor binding motif enrichment in differntially accessible regions
+2. transcription factor binding motif enrichment in differentially accessible regions
 3. Hi-C to examine 3D genome architecture differences
 Please note that the qPCR-based karyotyping assay detailed in this PDF is no longer relevant. I have since developed a custom approach to detect karyotypic abnormalities in hybrd cells using whole genome sequencing data. I am happy to supply the code upon request.
